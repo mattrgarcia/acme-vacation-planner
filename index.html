@@ -42,23 +42,29 @@
         this.state = {
           startDate: '',
           endDate: '',
+          error: ''
         }
         this.create = this.create.bind(this);
       }
 
       create(){
         this.props.create({startDate: this.state.startDate, endDate: this.state.endDate})
+          .catch(ex=> this.setState({error: ex.response.data.message}));
+         ;
       }
 
       render(){
-        const {startDate, endDate} = this.state;
+        const {startDate, endDate, error} = this.state;
         const {create} = this;
         return(
-          <form onSubmit= {(ev)=> ev.preventDefault()}>
-            <input onChange = {(ev)=> this.setState({startDate: ev.target.value})} value = {startDate}></input>
-            <input onChange = {(ev)=> this.setState({endDate: ev.target.value})} value ={endDate}></input>
-            <button onClick = {create}>Create Vacation</button>
-          </form>
+          <div>
+            <form onSubmit= {(ev)=> ev.preventDefault()}>
+              <input onChange = {(ev)=> this.setState({startDate: ev.target.value})} value = {startDate}></input>
+              <input onChange = {(ev)=> this.setState({endDate: ev.target.value})} value ={endDate}></input>
+              <button onClick = {create}>Create Vacation</button>
+            </form>
+            <h5>{error}</h5>
+          </div>
         );
       }
     }
