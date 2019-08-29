@@ -30,6 +30,24 @@
         storage.setItem('userId', user.id);
         return  user;
       };
+    class VacationForm extends Component {
+      constructor(){
+        super();
+        this.state = {
+          startDate: '',
+          endDate: ''
+        }
+      }
+      render(){
+        return(
+          <form>
+            <input></input>
+            <input></input>
+            <button>Create Vacation</button>
+          </form>
+        );
+      }
+    }
 
     class App extends Component {
       constructor(){
@@ -47,7 +65,10 @@
       render(){
         const { user, vacations } = this.state;
         return (
-          <h1>Acme Vacation Planner for { user.fullName }</h1>
+          <div>
+            <h1>Acme Vacation Planner for { user.fullName }</h1>
+            <VacationForm />
+          </div>
         );
       }
     }
