@@ -5,6 +5,12 @@
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js'></script>
+    <style>
+      /*form{
+        display: flex;
+        flex-direction: column;
+      }*/
+    </style>
   </head>
   <body>
     <div id='root'></div>
@@ -35,15 +41,24 @@
         super();
         this.state = {
           startDate: '',
-          endDate: ''
+          endDate: '',
         }
+        this.create = this.create.bind(this);
       }
+
+      create(){
+        this.props.create({startDate: this.state.startDate, endDate: this.state.endDate});
+
+      }
+
       render(){
+        const {startDate, endDate} = this.state;
+        const {create} = this;
         return(
-          <form>
-            <input></input>
-            <input></input>
-            <button>Create Vacation</button>
+          <form onSubmit= {(ev)=> ev.preventDefault()}>
+            <input onChange = {(ev)=> this.setState({startDate: ev.target.value})} value = {startDate}></input>
+            <input onChange = {(ev)=> this.setState({endDate: ev.target.value})} value ={endDate}></input>
+            <button onClick = {create}>Create Vacation</button>
           </form>
         );
       }
@@ -56,18 +71,23 @@
           user: {},
           vacations: []
         };
+        this.create = this.create.bind(this);
       }
       async componentDidMount(){
         const user = await fetchUser();
         const vacations =(await axios.get(`${API}/users/${ user.id }/vacations`)).data;
         this.setState({ user, vacations })
       }
+      async create (vacations){
+        console.log(vacations);
+      }
       render(){
         const { user, vacations } = this.state;
+        const {create}= this;
         return (
           <div>
             <h1>Acme Vacation Planner for { user.fullName }</h1>
-            <VacationForm />
+            <VacationForm create = {create}/>
           </div>
         );
       }
