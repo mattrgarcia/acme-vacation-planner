@@ -47,7 +47,7 @@
       }
 
       create(){
-        this.props.create({startDate: this.state.startDate, endDate: this.state.endDate});
+        this.props.create({startDate: this.state.startDate, endDate: this.state.endDate})
       }
 
       render(){
@@ -63,14 +63,14 @@
       }
     }
 
-    const List = ({user, vacations})=>{
+    const List = ({user, vacations, remove})=>{
       return (
         <ul>
           {
             vacations.map(vac =>
             <li key = {vac.id}>
             {moment(vac.startDate).format("dddd, MM/DD/YY")} <br /> to <br /> {moment(vac.endDate).format('dddd, MM/DD/YY')} <br /> {moment(vac.endDate).diff( vac.startDate, 'days')} days <br />
-            <button>Remove</button>
+            <button onClick={()=>remove(vac) }>Remove</button>
             </li>
             )
           }
@@ -86,24 +86,32 @@
           vacations: []
         };
         this.create = this.create.bind(this);
+        this.remove = this.remove.bind(this);
       }
       async componentDidMount(){
         const user = await fetchUser();
         const vacations =(await axios.get(`${API}/users/${ user.id }/vacations`)).data;
         this.setState({ user, vacations })
       }
-      async create (vacations){
-        const newVacation = (await axios.post(`${API}/users/${ this.state.user.id }/vacations`, vacations)).data;
+      async create (vacation){
+        const newVacation = (await axios.post(`${API}/users/${ this.state.user.id }/vacations`, vacation)).data;
         this.setState({vacations: newVacation});
       }
+
+      async remove (vacation){
+        await axios.delete(`${API}/users/${ this.state.user.id }/vacations/${ vacation.id}`)
+        const vacations =(await axios.get(`${API}/users/${ this.state.user.id }/vacations`)).data;
+        this.setState({ user: this.state.user, vacations: vacations })
+      }
+
       render(){
         const { user, vacations } = this.state;
-        const {create}= this;
+        const {create, remove }= this;
         return (
           <div>
             <h1>Acme Vacation Planner for { user.fullName }</h1>
             <VacationForm create = {create}/>
-            <List user= {user} vacations = {vacations}/>
+            <List user= {user} vacations = {vacations} remove={remove}/>
           </div>
         );
       }
