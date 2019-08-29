@@ -7,7 +7,52 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js'></script>
   </head>
   <body>
-    <script>
+    <div id='root'></div>
+    <script type='text/babel'>
+    const { createElement, Component } = React;
+    const { render } = ReactDOM;
+
+      const API = 'https://acme-users-api-rev.herokuapp.com/api';
+
+      const fetchUser = async ()=> {
+        const storage = window.localStorage;
+        const userId = storage.getItem('userId');
+        if(userId){
+          try {
+            return (await axios.get(`${API}/users/detail/${userId}`)).data;
+          }
+          catch(ex){
+            storage.removeItem('userId');
+            return fetchUser();
+          }
+        }
+        const user = (await axios.get(`${API}/users/random`)).data;
+        storage.setItem('userId', user.id);
+        return  user;
+      };
+
+    class App extends Component {
+      constructor(){
+        super();
+        this.state = {
+          user: {},
+          vacations: []
+        };
+      }
+      async componentDidMount(){
+        const user = await fetchUser();
+        const vacations =(await axios.get(`${API}/users/${ user.id }/vacations`)).data;
+        this.setState({ user, vacations })
+      }
+      render(){
+        const { user, vacations } = this.state;
+        return (
+          <h1>Acme Vacation Planner for { user.fullName }</h1>
+        );
+      }
+    }
+    const root = document.querySelector('#root');
+    render(<App />, root);
     </script>
   </body>
 </html>
