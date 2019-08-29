@@ -6,10 +6,40 @@
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js'></script>
     <style>
-      /*form{
+      body {
+        font-family: Verdana
+      }
+      form {
         display: flex;
         flex-direction: column;
-      }*/
+      }
+      input {
+        width: 75rem;
+        height: 3rem;
+      }
+      ul {
+        list-style-type: none;
+      }
+      .vacations {
+        display:flex;
+        border: 1px solid black;
+        justify-content: center
+      }
+      .removeButton {
+        background-color: tomato;
+        color: white;
+        width: 5rem;
+        height: 2rem;
+        font-size: 1rem;
+      }
+      .createButton {
+        width: 75rem;
+        height: 2rem;
+        background-color: dodgerblue;
+        color: white;
+        font-weight: bold;
+        font-size: 1rem
+      }
     </style>
   </head>
   <body>
@@ -61,7 +91,7 @@
             <form onSubmit= {(ev)=> ev.preventDefault()}>
               <input onChange = {(ev)=> this.setState({startDate: ev.target.value})} value = {startDate}></input>
               <input onChange = {(ev)=> this.setState({endDate: ev.target.value})} value ={endDate}></input>
-              <button onClick = {create}>Create Vacation</button>
+              <button className='createButton' onClick = {create}>Create Vacation</button>
             </form>
             <h5>{error}</h5>
           </div>
@@ -71,16 +101,18 @@
 
     const List = ({user, vacations, remove})=>{
       return (
-        <ul>
-          {
-            vacations.map(vac =>
-            <li key = {vac.id}>
-            {moment(vac.startDate).format("dddd, MM/DD/YY")} <br /> to <br /> {moment(vac.endDate).format('dddd, MM/DD/YY')} <br /> {moment(vac.endDate).diff( vac.startDate, 'days')} days <br />
-            <button onClick={()=>remove(vac) }>Remove</button>
-            </li>
-            )
-          }
-        </ul>
+        <div className='vacations'>
+          <ul>
+            {
+              vacations.map(vac =>
+              <li key = {vac.id}>
+              {moment(vac.startDate).format("dddd, MM/DD/YY")} <br /> to <br /> {moment(vac.endDate).format('dddd, MM/DD/YY')} <br /> {moment(vac.endDate).diff( vac.startDate, 'days')} days <br />
+              <button className='removeButton' onClick={()=>remove(vac) }>Remove</button>
+              </li>
+              )
+            }
+          </ul>
+        </div>
       )
     }
 
